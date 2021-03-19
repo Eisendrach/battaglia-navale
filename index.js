@@ -142,36 +142,36 @@ app.signup("/signup", (req, res) => {
 app.get("/fire", ({ query: { x, y, team, password } }, res) => { 
    const FiringTeamData = teams[team]
    const resultmessage = ""
-   if (FiringTeamData.lastFiredBullet + new Date().getTime() < 1000){
-     resultmessage = "artiglieria in ricarica, a breve sarà disponibile"
+   if (FiringTeamData.lastFiredBullet + new Date().getTime() < 1000){               /*Check if not enough time had passed otherwise break. In that case break. Otherwise go on */
+     resultmessage = "cannons are recharging, soon they'll be ready"
    }else{     
     FiringTeamData.firedBullets +=1
     FiringTeamData.lastFiredBullet = new Date().getTime()
-      if (x>W || y>H || x<0 || y<0 ){
+      if (x>W || y>H || x<0 || y<0 ){                                               /*check if the coordinates are outside the playable area. In that case subtract points. Otherwise go on*/
         FiringTeamData.score -= 5 
-        resultmessage = "Il tuo colpo è uscito dal tabellone, hai subito una penalità di -5 punti"
+        resultmessage = "You aimed outside the playing area, 5 points were subtracted"
       }else{
         const FiredCell = field[x][y]
-        if(FiredCell.hit){
+        if(FiredCell.hit){                                                          /*check if the cell has already been hit. In that case subtract points. Otherwise go on*/
           FiringTeamData.score -=2
-          resultmessage = "Hai colpito una cella già colpita, hai subito una penalità di -2 punti"
+          resultmessage = "You aimed at an already shot position, 2 points were subtracted" 
         }else{
-          FiredCell.hit = true
-          if(FiredCell.ship){
+          FiredCell.hit = true /*the cell is tagged as hit before checking if there's a ship on it*/ 
+          if(FiredCell.ship){                                                       /*check if the cell has a ship on it. In that case check if alive to tell how many points to add. Otherwise you hit water*/
             const FiredShip = FiredCell.ship
             FiredShip.curHp -=1 
-            if(FiredShip.curHp == 0){
+            if(FiredShip.curHp == 0){                                                /*check if the ship has no hp left. In that case add many points and update killer-like-values. Otherwise the ship is alive*/
                 FiredShip.alive = false
                 FiredShip.killer = FiringTeamData.name
                 FiringTeamData.killedShips.push(FiredShip.id)
                 FiringTeamData.score +=3
-                resultmessage= `Hai colpito ed affondato la nave ${FiredShip.name}`
+                resultmessage= `You hit and sank the ship ${FiredShip.name}, 3 points were added` 
             }else{
                 FiringTeamData.score += 1
-                resultmessage = "Hai colpito una nave che però galleggia ancora"
+                resultmessage = "You hit a ship, 1 points was added"                 
             }
           }else{
-            resultmessage = "Hai fatto buco nell'acqua"
+            resultmessage = "You hit water"
           }
         }
       }
