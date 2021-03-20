@@ -47,7 +47,7 @@ for (let i = 0; i < S; i++) {
     y: faker.random.number({ min: 0, max: vertical ? H - maxHp : H - 1 }),
     vertical,
     maxHp,
-    curHp: 4,
+    curHp: maxHp,
     alive: true,
     killer: null
   }
