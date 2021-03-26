@@ -157,6 +157,12 @@ app.get("/score", (req, res) => {
   })))
 })
 
+app.get("/register", ({ query: { codename, pass } }, res) => {
+  teams[codename].name = codename
+  teams[codename].password = pass
+  res.status(200).json(W, H)
+})
+
 app.get("/signup", ({ query: { name, password } }, res) => {
   if (!name || !password) {
     return res.sendStatus(400)
